@@ -1,0 +1,52 @@
+- put quantity in the start of item details
+minimum 'quantity' to 'item'
+new column for 50s - editable in calculator
+
+quantity issued - 0
+quantity redeemed - 1
+put filter all/active/redeemed/user/   (CAN I SIMPLIFY VIEW) Remove the qr code
+
+Form Preview - change to eVoucher Preview [DONE]
+remove name and CID [DONE]
+remove issuer [DONE]
+add column for self payment/ funded [DONE]
+add column issue date [DONE]
+number items can be edited [DONE]
+
+Users Form (mobile form)
+Log in
+show list of the vouchers they have
+under 'My Programmes' put eVoucher icon
+redeemed button only
+show the data except the items
+add 'History' 
+
+Voucher preview
+voucher id[DONE]
+visit type[DONE]
+deparment[DONE]
+expiry date[DONE]
+
+redeem to confirm - when redeem , quantity can be editable. if 1 .. can just delete.
+once confirmed.. show the qr code for pharmacist to scan
+
+pharmacy View
+2 screens (issue and transactions)
+
+issue item - button to scan the qr code (transactions from the users phone) then show the items. if there are no stocks, can be cancel or delete.
+
+when issue, update the users voucher in mobile.
+
+------------
+
+
+
+
+
+
+
+
+
+
+
+	

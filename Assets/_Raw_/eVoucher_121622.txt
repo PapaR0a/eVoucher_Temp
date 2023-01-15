@@ -1,0 +1,32 @@
+
+--History
+put more details
+change 'Generated to partial redemption
+remove visit type - replace to 'organization'
+
+replace 'Voucher Removed' to 'Voucher Redeemed' or 'Voucher Expired'
+
+--Redeeming
+change 'Items' to 'QTY' (Quantity)
+change 'Items to be redeem' to 'QTY to redeem'
+
+--QR Generated
+put qr code to same redeem screen
+once QR code is generated (add voucher number) - button should be cancel. if cancelled, go back to history page.
+show same page when click on history logs.
+
+pharmacist tablet
+
+has a log in page
+
+page 1
+show items that are redeemed before
+filter/sort by organization/department/date range/account who issued
+add column for account who issued
+
+page 2
+scan icon button
+
+target date: January 6, 2023
+
+
