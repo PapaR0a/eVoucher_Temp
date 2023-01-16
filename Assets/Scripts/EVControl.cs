@@ -37,6 +37,18 @@ public class EVControl
         EVModel.Api.CachedUserData = APIHelper.GetUserData(userId);
     }
 
+    public void UpdateVoucherData(string voucherId, Dictionary<string, int> items)
+    {
+        var userData = EVModel.Api.CachedUserData;
+
+        APIHelper.UpdateVoucher(userData.id, voucherId, items);
+    }
+
+    public void GenerateNewVoucherData(string userId, Voucher newVoucherData)
+    {
+        APIHelper.CreateVoucher(userId, newVoucherData);
+    }
+
     public void ShowVoucherDetails(Voucher voucher)
     {
         OnShowVoucherDetails?.Invoke(voucher);

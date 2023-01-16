@@ -16,6 +16,15 @@ public class EVCardsPageItemView : MonoBehaviour
 
     private Voucher m_Data;
 
+    [SerializeField] private List<Sprite> m_OrgLogos;
+    [SerializeField] private Image m_ImageOrgLogo;
+
+    [SerializeField] private List<Sprite> m_FrontCardImages;
+    [SerializeField] private List<Sprite> m_BackCardImages;
+
+    [SerializeField] private Image m_ImageCardFront;
+    [SerializeField] private Image m_ImageCardBack;
+
     public void OnDestroy()
     {
         m_BtnRedeem.onClick.RemoveAllListeners();
@@ -45,11 +54,69 @@ public class EVCardsPageItemView : MonoBehaviour
         m_TxtExpiryDate.text = $"Expiry Date: {data.expiry_date}";
 
         m_TxtId.text = data.id;
+
+        m_ImageOrgLogo.sprite = GetOrgSprite(m_Data.org);
+        m_ImageCardFront.sprite = GetFrontCardSprite(m_Data.org);
+        m_ImageCardBack.sprite = GetBackCardSprite(m_Data.org);
     }
 
     public void OnClickRedeem()
     {
         EVModel.Api.CachedCurrentVoucher = m_Data;
         EVControl.Api.ShowVoucherDetails(m_Data);
+    }
+
+    private Sprite GetOrgSprite(string org)
+    {
+        switch (org)
+        {
+            case "TTSH":
+                return m_OrgLogos[(int)Organizations.TTSH];
+
+            case "WDL":
+                return m_OrgLogos[(int)Organizations.WDL];
+
+            case "NHGP":
+                return m_OrgLogos[(int)Organizations.NHGP];
+
+            default:
+                return m_OrgLogos[(int)Organizations.TTSH];
+        }
+    }
+
+    private Sprite GetFrontCardSprite(string org)
+    {
+        switch (org)
+        {
+            case "TTSH":
+                return m_FrontCardImages[(int)Organizations.TTSH];
+
+            case "WDL":
+                return m_FrontCardImages[(int)Organizations.WDL];
+
+            case "NHGP":
+                return m_FrontCardImages[(int)Organizations.NHGP];
+
+            default:
+                return m_FrontCardImages[(int)Organizations.TTSH];
+        }
+    }
+
+    private Sprite GetBackCardSprite(string org)
+    {
+        switch (org)
+        {
+            case "TTSH":
+                return m_BackCardImages[(int)Organizations.TTSH];
+
+            case "WDL":
+                return m_BackCardImages[(int)Organizations.WDL];
+
+            case "NHGP":
+                return m_BackCardImages[(int)Organizations.NHGP];
+
+            default:
+                return m_BackCardImages[(int)Organizations.TTSH];
+        }
     }
 }

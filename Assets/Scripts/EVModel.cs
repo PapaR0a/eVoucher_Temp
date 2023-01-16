@@ -59,6 +59,22 @@ public class EVModel
     }
 }
 
+public enum Organizations
+{
+    TTSH,
+    WDL,
+    NHGP
+}
+
+public enum VoucherStatus
+{
+    Expired = -1,
+    Redeemed = 0,
+    Active = 1,
+    Partial_Redemption = 2,
+    Pending = 3
+}
+
 [System.Serializable]
 public class Voucher
 {

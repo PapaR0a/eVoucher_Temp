@@ -2307,6 +2307,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d57fd3e0611d16418c63afd143b3b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_OrgLogos:
+  - {fileID: 21300000, guid: 3f93e72ca2bf1b74384db27a03b153b3, type: 3}
+  - {fileID: 21300000, guid: 08471d28cb610f640bf9c696d9073d1d, type: 3}
+  - {fileID: 21300000, guid: 70df4b91bc6a6f34eb86337831834ae7, type: 3}
+  m_ImageOrgLogo: {fileID: 7119414880821859729}
+  m_FrontCardImages:
+  - {fileID: 21300000, guid: a2e3d3ab64e61b642b17214aa2d257c5, type: 3}
+  - {fileID: 21300000, guid: 370ce7833ce66b54bbb12d15ee0cf5fa, type: 3}
+  - {fileID: 21300000, guid: 6e0de9cdf57259f4386aaa822d1d6e97, type: 3}
+  m_BackCardImages:
+  - {fileID: 21300000, guid: 4e4dc760bcdcf6e4daa01872796b6a51, type: 3}
+  - {fileID: 21300000, guid: c63b21c5062d77d45ae48b26195c2dae, type: 3}
+  - {fileID: 21300000, guid: 76aad9e662a480942ae1ecc8a09bd572, type: 3}
+  m_ImageCardFront: {fileID: 7119414881018596740}
+  m_ImageCardBack: {fileID: 7119414881285967628}
 --- !u!1 &7119414881820533074
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,7 +2339,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7119414881820533077
 RectTransform:
   m_ObjectHideFlags: 0
