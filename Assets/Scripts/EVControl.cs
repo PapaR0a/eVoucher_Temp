@@ -25,6 +25,8 @@ public class EVControl
     }
     #endregion
 
+    public Action<Voucher> OnShowVoucherDetails { get; set; }
+
     public void Init()
     {
         // Instantiate other stuff here if needed
@@ -33,5 +35,10 @@ public class EVControl
     public void FetchUserData(string userId)
     {
         EVModel.Api.CachedUserData = APIHelper.GetUserData(userId);
+    }
+
+    public void ShowVoucherDetails(Voucher voucher)
+    {
+        OnShowVoucherDetails?.Invoke(voucher);
     }
 }

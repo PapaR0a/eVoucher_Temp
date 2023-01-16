@@ -14,6 +14,8 @@ public class EVCardsPageView : MonoBehaviour
 
     private void OnEnable()
     {
+        ClearItems();
+
         List<Voucher> activeVouchers = EVModel.Api.GetActiveVouchers();
         Debug.Log($"<color=yellow>activeVouchers {JsonConvert.SerializeObject(activeVouchers)}</color>");
         if (activeVouchers != null && activeVouchers.Count > 0)
@@ -32,6 +34,19 @@ public class EVCardsPageView : MonoBehaviour
             {
                 StartCoroutine(CreateHistoryCards(voucherData));
             }
+        }
+    }
+
+    private void ClearItems()
+    {
+        foreach (Transform card in m_CardsContainer)
+        {
+            Destroy(card.gameObject);
+        }
+
+        foreach (Transform card in m_HistoryContainer)
+        {
+            Destroy(card.gameObject);
         }
     }
 
