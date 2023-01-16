@@ -6,6 +6,8 @@ public class EVModel
 
     public UserData CachedUserData { get; set; } = null;
 
+    public Voucher CachedCurrentVoucher { get; set; } = null;
+
     public string UserId { get; set; }
 
     public UserData GetCachedUserData()
@@ -66,6 +68,16 @@ public class Voucher
     public string status;
     public string expiry_date;
     public string fundingType;
+    public VoucherProduct[] items;
+}
+
+[System.Serializable]
+public class VoucherProduct
+{
+    public string id;
+    public string name;
+    public int quantity;
+    public int remaining;
 }
 
 [System.Serializable]

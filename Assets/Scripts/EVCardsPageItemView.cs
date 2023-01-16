@@ -21,10 +21,8 @@ public class EVCardsPageItemView : MonoBehaviour
         m_BtnRedeem.onClick.RemoveAllListeners();
     }
 
-    public void SetupCard(Voucher data)
+    public void OnEnable()
     {
-        m_Data = data;
-
         m_TxtTitle = transform.Find("front/Text").GetComponent<Text>();
         m_TxtFundingType = transform.Find("front/FundingType").GetComponent<Text>();
         m_TxtOrganization = transform.Find("front/Organization").GetComponent<Text>();
@@ -34,18 +32,24 @@ public class EVCardsPageItemView : MonoBehaviour
         m_TxtId = transform.Find("back/Text").GetComponent<Text>();
         m_BtnRedeem = transform.Find("back/Redeem").GetComponent<Button>();
 
+        m_BtnRedeem.onClick.AddListener(OnClickRedeem);
+    }
+
+    public void SetupCard(Voucher data)
+    {
+        m_Data = data;
+
         m_TxtFundingType.text = $"Funding Type: {data.fundingType}";
         m_TxtOrganization.text = $"Organization: {data.org}";
         m_TxtDepartment.text = $"Department: {data.department}";
         m_TxtExpiryDate.text = $"Expiry Date: {data.expiry_date}";
 
         m_TxtId.text = data.id;
-
-        m_BtnRedeem.onClick.AddListener(OnClickRedeem);
     }
 
     public void OnClickRedeem()
     {
-        EVControl.Api.OnShowVoucherDetails(m_Data);
+        EVModel.Api.CachedCurrentVoucher = m_Data;
+        EVControl.Api.ShowVoucherDetails(m_Data);
     }
 }
