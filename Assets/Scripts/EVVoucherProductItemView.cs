@@ -31,7 +31,7 @@ public class EVVoucherProductItemView : MonoBehaviour
         m_IfRedeemCount.gameObject.SetActive(!readOnly);
         m_IfRedeemCount.onEndEdit.AddListener(delegate { OnEditRedeem(); });
 
-        m_TxtQuantity.text = data.remaining.ToString();
+        m_TxtQuantity.text = readOnly ? data.quantity.ToString() : data.remaining.ToString();
         m_TxtProductName.text = data.name;
     }
 

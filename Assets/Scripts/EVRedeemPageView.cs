@@ -29,6 +29,8 @@ public class EVRedeemPageView : MonoBehaviour
 
     [SerializeField] private RawImage m_QRCode;
     [SerializeField] private Text m_QRCodeIdDisplay;
+    [SerializeField] private GameObject m_ScanToRedeem;
+    [SerializeField] private Text m_TxtToRedeem;
     private Texture2D m_storeEncodedTexture;
     private string m_newVoucherId;
 
@@ -63,6 +65,7 @@ public class EVRedeemPageView : MonoBehaviour
         m_storeEncodedTexture.Apply();
 
         m_QRCode.texture = m_storeEncodedTexture;
+        m_QRCodeIdDisplay.text = id;
     }
 
     void OnDestroy()
@@ -107,9 +110,10 @@ public class EVRedeemPageView : MonoBehaviour
         ClearItems();
 
         StartCoroutine( CreateItems(voucherData.items, readOnly) );
-
+        m_ScanToRedeem.SetActive(readOnly);
+        m_TxtToRedeem.gameObject.SetActive(!readOnly);
         m_BtnRedeem.gameObject.SetActive(!readOnly);
-
+        m_QRCode.gameObject.SetActive(readOnly);
         if (readOnly)
         {
             CreateQR(m_Data.id);
@@ -120,13 +124,16 @@ public class EVRedeemPageView : MonoBehaviour
     {
         var wait = new WaitForEndOfFrame();
 
-        foreach (var product in products)
+        if (products.Length > 0)
         {
-            var productView = Instantiate(m_PrefVoucherProduct, m_ProductsContainer).GetComponent<EVVoucherProductItemView>();
-            yield return wait;
+            foreach (var product in products)
+            {
+                var productView = Instantiate(m_PrefVoucherProduct, m_ProductsContainer).GetComponent<EVVoucherProductItemView>();
+                yield return wait;
 
-            if (productView != null && product != null)
-                productView.Setup(product, readOnly);
+                if (productView != null && product != null)
+                    productView.Setup(product, readOnly);
+            }
         }
     }
 
