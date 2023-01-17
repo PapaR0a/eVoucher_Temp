@@ -20,7 +20,7 @@ public static class APIHelper
         return JsonUtility.FromJson<UserData>(json);
     }
 
-    public static void UpdateVoucher(string userId, string voucherId, Dictionary<string, int> items)
+    public static void UpdateVoucher(PatchVoucherData updateVoucherData)
     {
         HttpWebRequest updateRequest = (HttpWebRequest)WebRequest.Create(string.Format(EVConstants.URL_VOUCHER_UPDATE));
         //request.ContentType = "application/json";
@@ -28,25 +28,21 @@ public static class APIHelper
 
         using (var streamWriter = new StreamWriter(updateRequest.GetRequestStream()))
         {
-            JObject postJson = new JObject()
-            {
-                ["patientId"] = userId,
-                ["voucherId"] = voucherId,
-                ["items"] = JsonConvert.SerializeObject(items)
-            };
-            Debug.Log($"<color=yellow>PATCH Json: {JsonConvert.SerializeObject(postJson).Replace(@"\", "") }</color>");
-            streamWriter.Write(JsonConvert.SerializeObject( postJson ).Replace(@"\", ""));
+            string voucherJson = JsonConvert.SerializeObject(updateVoucherData);
+
+            Debug.Log($"<color=yellow>PATCH Json: {voucherJson}</color>");
+            streamWriter.Write(voucherJson);
         }
 
-        //HttpWebResponse updateResponse = (HttpWebResponse)updateRequest.GetResponse();
+        HttpWebResponse updateResponse = (HttpWebResponse)updateRequest.GetResponse();
 
-        //StreamReader updateReader = new StreamReader(updateResponse.GetResponseStream());
-        //string json = updateReader.ReadToEnd();
+        StreamReader updateReader = new StreamReader(updateResponse.GetResponseStream());
+        string json = updateReader.ReadToEnd();
 
-        //Debug.Log($"<color=yellow>received json: {json}</color>");
+        Debug.Log($"<color=yellow>received json: {json}</color>");
     }
 
-    public static void CreateVoucher(string userId, Voucher data)
+    public static void CreateVoucher(PostVoucherData data)
     {
         HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(string.Format(EVConstants.URL_VOUCHER_CREATE));
         //request.ContentType = "application/json";
@@ -56,21 +52,15 @@ public static class APIHelper
         {
             string voucherJson = JsonConvert.SerializeObject(data);
 
-            JObject postJson = new JObject()
-            {
-                ["patientId"] = userId,
-                ["voucher"] = voucherJson
-            };
-
-            Debug.Log($"<color=yellow>POST Json: {JsonConvert.SerializeObject(postJson).Replace(@"\","")}</color>");
-            streamWriter.Write(JsonConvert.SerializeObject(postJson).Replace(@"\", ""));
+            Debug.Log($"<color=yellow>POST Json: {voucherJson}</color>");
+            streamWriter.Write(voucherJson);
         }
 
-        //HttpWebResponse response = (HttpWebResponse)createRequest.GetResponse();
+        HttpWebResponse response = (HttpWebResponse)createRequest.GetResponse();
 
-        //StreamReader reader = new StreamReader(response.GetResponseStream());
-        //string json = reader.ReadToEnd();
+        StreamReader reader = new StreamReader(response.GetResponseStream());
+        string json = reader.ReadToEnd();
 
-        //Debug.Log($"<color=yellow>received json: {json}</color>");
+        Debug.Log($"<color=yellow>received json: {json}</color>");
     }
 }

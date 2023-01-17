@@ -65,4 +65,9 @@ public class EVVoucherProductItemView : MonoBehaviour
     {
         return m_Data.name;
     }
+
+    public int GetItemDefaultQuantity()
+    {
+        return m_Data.quantity;
+    }
 }

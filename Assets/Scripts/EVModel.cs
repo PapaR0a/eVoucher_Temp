@@ -112,3 +112,18 @@ public class UserData
     public int status_code;
     public Voucher[] vouchers;
 }
+
+[System.Serializable]
+public class PostVoucherData
+{
+    public string patiendId;
+    public Voucher voucher;
+}
+
+[System.Serializable]
+public class PatchVoucherData
+{
+    public string patiendId;
+    public string voucherId;
+    public List<VoucherProduct> items;
+}

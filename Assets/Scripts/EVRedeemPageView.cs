@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+//using zxing;
 
 public class EVRedeemPageView : MonoBehaviour
 {
@@ -16,6 +17,14 @@ public class EVRedeemPageView : MonoBehaviour
 
     [SerializeField] private GameObject m_PrefVoucherProduct;
     [SerializeField] private Transform m_ProductsContainer;
+
+    [SerializeField] private List<Sprite> m_OrgLogos;
+    [SerializeField] private Image m_ImageOrgLogo;
+
+    [SerializeField] private List<Sprite> m_FrontCardImages;
+    [SerializeField] private Image m_ImageCardFront;
+
+    [SerializeField] private RawImage m_QRCode;
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +62,9 @@ public class EVRedeemPageView : MonoBehaviour
         m_TxtExpiryDate.text = $"Expiry Date: {voucherData.expiry_date}";
         m_TxtId.text = voucherData.id;
 
+        m_ImageOrgLogo.sprite = GetOrgSprite(m_Data.org);
+        m_ImageCardFront.sprite = GetFrontCardSprite(m_Data.org);
+
         ClearItems();
 
         StartCoroutine( CreateItems(voucherData.items) );
@@ -82,22 +94,35 @@ public class EVRedeemPageView : MonoBehaviour
 
     private void OnGenerateQR()
     {
-        var newVoucher = new Voucher();
-        newVoucher.id = "NEW ID";
-        newVoucher.status = "Pending";
-        newVoucher.department = m_Data.department;
-        newVoucher.org = m_Data.org;
-        newVoucher.expiry_date = m_Data.expiry_date;
-        newVoucher.fundingType = m_Data.fundingType;
+        //m_QRCode
+
+        var newVoucher = new PostVoucherData();
+        newVoucher.patiendId = EVModel.Api.CachedUserData.id;
+
+        newVoucher.voucher = new Voucher();
+        newVoucher.voucher.id = "NEW ID";
+        newVoucher.voucher.status = "Pending";
+        newVoucher.voucher.department = m_Data.department;
+        newVoucher.voucher.org = m_Data.org;
+        newVoucher.voucher.expiry_date = m_Data.expiry_date;
+        newVoucher.voucher.fundingType = m_Data.fundingType;
 
         var redeemingItems = new List<VoucherProduct>();
-        var remainingItems = new Dictionary<string, int>();
+        var remainingItems = new PatchVoucherData();
+        remainingItems.patiendId = EVModel.Api.CachedUserData.id;
+        remainingItems.voucherId = m_Data.id;
+        remainingItems.items = new List<VoucherProduct>();
         foreach (Transform item in m_ProductsContainer)
         {
             EVVoucherProductItemView itemView = item.GetComponent<EVVoucherProductItemView>();
             if (itemView != null)
             {
-                remainingItems.Add(itemView.GetItemId(), itemView.GetItemRemaining());
+                var remainingItem = new VoucherProduct();
+                remainingItem.id = itemView.GetItemId();
+                remainingItem.name = itemView.GetItemName();
+                remainingItem.quantity = itemView.GetItemDefaultQuantity();
+                remainingItem.remaining = itemView.GetItemRemaining();
+                remainingItems.items.Add(remainingItem);
 
                 var redeemingItem = new VoucherProduct();
                 redeemingItem.id = itemView.GetItemId();
@@ -107,9 +132,50 @@ public class EVRedeemPageView : MonoBehaviour
             }
         }
 
-        newVoucher.items = redeemingItems.ToArray();
+        newVoucher.voucher.items = redeemingItems.ToArray();
 
-        EVControl.Api.GenerateNewVoucherData(m_Data.id, newVoucher);
-        EVControl.Api.UpdateVoucherData(m_Data.id, remainingItems);
+        EVControl.Api.UpdateVoucherData(remainingItems);
+        EVControl.Api.GenerateNewVoucherData(newVoucher);
+    }
+
+    //private Color32[] CreateQR()
+    //{
+
+    //}
+
+    private Sprite GetOrgSprite(string org)
+    {
+        switch (org)
+        {
+            case "TTSH":
+                return m_OrgLogos[(int)Organizations.TTSH];
+
+            case "WDL":
+                return m_OrgLogos[(int)Organizations.WDL];
+
+            case "NHGP":
+                return m_OrgLogos[(int)Organizations.NHGP];
+
+            default:
+                return m_OrgLogos[(int)Organizations.TTSH];
+        }
+    }
+
+    private Sprite GetFrontCardSprite(string org)
+    {
+        switch (org)
+        {
+            case "TTSH":
+                return m_FrontCardImages[(int)Organizations.TTSH];
+
+            case "WDL":
+                return m_FrontCardImages[(int)Organizations.WDL];
+
+            case "NHGP":
+                return m_FrontCardImages[(int)Organizations.NHGP];
+
+            default:
+                return m_FrontCardImages[(int)Organizations.TTSH];
+        }
     }
 }
