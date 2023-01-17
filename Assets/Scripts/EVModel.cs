@@ -4,6 +4,8 @@ public class EVModel
 {
     public static EVModel Api { get; set; } = new EVModel();
 
+    public Dictionary<string, string> Users { get; set; } = new Dictionary<string, string>();
+
     public UserData CachedUserData { get; set; } = null;
 
     public Voucher CachedCurrentVoucher { get; set; } = null;
@@ -30,7 +32,7 @@ public class EVModel
             {
                 if (voucher.status == "active")
                 {
-                    voucher.fundingType = CachedUserData.funding_type;
+                    voucher.fundingType = CachedUserData.fundingType;
                     activeVouchers.Add(voucher);
                 }
             }
@@ -49,7 +51,7 @@ public class EVModel
             {
                 if (voucher.status != "active")
                 {
-                    voucher.fundingType = CachedUserData.funding_type;
+                    voucher.fundingType = CachedUserData.fundingType;
                     historyVouchers.Add(voucher);
                 }
             }
@@ -106,7 +108,7 @@ public class UserData
     public int funding;
     public int subsidy;
     public string duration;
-    public string funding_type; 
+    public string fundingType; 
     public int funding_type_code;
     public string status;
     public int status_code;

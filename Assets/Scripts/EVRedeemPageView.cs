@@ -152,7 +152,7 @@ public class EVRedeemPageView : MonoBehaviour
         newVoucher.voucher.department = m_Data.department;
         newVoucher.voucher.org = m_Data.org;
         newVoucher.voucher.expiry_date = m_Data.expiry_date;
-        newVoucher.voucher.fundingType = m_Data.fundingType;
+        newVoucher.voucher.fundingType = EVModel.Api.CachedUserData.fundingType;
 
         var redeemingItems = new List<VoucherProduct>();
         var remainingItems = new PatchVoucherData();
@@ -181,8 +181,10 @@ public class EVRedeemPageView : MonoBehaviour
 
         newVoucher.voucher.items = redeemingItems.ToArray();
 
-        EVControl.Api.UpdateVoucherData(remainingItems);
+        //EVControl.Api.UpdateVoucherData(remainingItems);
         EVControl.Api.GenerateNewVoucherData(newVoucher);
+
+        EVControl.Api.FetchUserData("");
     }
 
     private Sprite GetOrgSprite(string org)

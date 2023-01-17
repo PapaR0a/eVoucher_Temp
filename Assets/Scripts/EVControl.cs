@@ -33,6 +33,11 @@ public class EVControl
         // Instantiate other stuff here if needed
     }
 
+    public void FetchUsers()
+    {
+        APIHelper.GetListUsers();
+    }
+
     public void FetchUserData(string userId)
     {
         EVModel.Api.CachedUserData = APIHelper.GetUserData(userId);

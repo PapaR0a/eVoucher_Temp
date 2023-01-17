@@ -11,7 +11,8 @@ public class MainMenuView : MonoBehaviour
     void Start()
     {
         EVControl.Api.OnUpdateUserIdDisplay += UpdateUserNameDisplay;
-        FetchUserData();
+        //FetchUserData();
+        EVControl.Api.FetchUsers();
     }
 
     private void OnDestroy()
