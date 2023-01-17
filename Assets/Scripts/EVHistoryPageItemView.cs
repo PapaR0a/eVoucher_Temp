@@ -11,8 +11,12 @@ public class EVHistoryPageItemView : MonoBehaviour
     private Text m_TxtFundingType;
     private Text m_TxtExpiryDate;
 
+    private Voucher m_Data;
+
     public void SetupCard(Voucher data)
     {
+        m_Data = data;
+
         m_TxtStatus = transform.Find("status").GetComponent<Text>();
         m_TxtOrganization = transform.Find("organization").GetComponent<Text>();
         m_TxtDepartment = transform.Find("department").GetComponent<Text>();
@@ -24,5 +28,11 @@ public class EVHistoryPageItemView : MonoBehaviour
         m_TxtDepartment.text = $"Department: {data.department}";
         m_TxtFundingType.text = $"Funding Type: {data.fundingType}";
         m_TxtExpiryDate.text = $"Expiration Date: {data.expiry_date}";
+    }
+
+    public void OnClickCard()
+    {
+        EVModel.Api.CachedCurrentVoucher = m_Data;
+        EVControl.Api.ShowVoucherDetails(m_Data, true);
     }
 }

@@ -17,7 +17,7 @@ public class EVCardsPageView : MonoBehaviour
         ClearItems();
 
         List<Voucher> activeVouchers = EVModel.Api.GetActiveVouchers();
-        Debug.Log($"<color=yellow>activeVouchers {JsonConvert.SerializeObject(activeVouchers)}</color>");
+        //Debug.Log($"<color=yellow>activeVouchers {JsonConvert.SerializeObject(activeVouchers)}</color>");
         if (activeVouchers != null && activeVouchers.Count > 0)
         {
             foreach (var voucherData in activeVouchers)
@@ -27,7 +27,7 @@ public class EVCardsPageView : MonoBehaviour
         }
 
         List<Voucher> historyVouchers = EVModel.Api.GetHistoryVouchers();
-        Debug.Log($"<color=yellow>historyVouchers {JsonConvert.SerializeObject(historyVouchers)}</color>");
+        //Debug.Log($"<color=yellow>historyVouchers {JsonConvert.SerializeObject(historyVouchers)}</color>");
         if (historyVouchers != null && historyVouchers.Count > 0)
         {
             foreach (var voucherData in historyVouchers)

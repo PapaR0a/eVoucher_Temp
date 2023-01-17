@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine.Networking;
 
 public static class APIHelper
 {
@@ -24,13 +25,13 @@ public static class APIHelper
         {
             string userId = userData.Value<string>("id");
             string userName = userData.Value<string>("name");
-            EVModel.Api.Users.Add(userId, userName);
+            EVModel.Api.Users.Add(userName, userId);
         }
     }
 
     public static UserData GetUserData(string userId)
     {
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(EVConstants.URL_USERDATA_TEST, userId));
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(EVConstants.URL_USERDATA, userId));
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
         StreamReader reader = new StreamReader(response.GetResponseStream());
@@ -43,18 +44,18 @@ public static class APIHelper
 
     public static void UpdateVoucher(PatchVoucherData updateVoucherData)
     {
-        HttpWebRequest updateRequest = (HttpWebRequest)WebRequest.Create(string.Format(EVConstants.URL_VOUCHER_UPDATE));
-        updateRequest.Method = "PATCH";
+        HttpWebRequest updateRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_VOUCHER_UPDATE);
+        updateRequest.Method = "POST";
 
-        var postData = new JObject()
+        var putData = new JObject()
         {
             ["patientId"] = updateVoucherData.patiendId,
             ["voucherId"] = updateVoucherData.voucherId,
-            ["items"] = JsonConvert.SerializeObject(updateVoucherData.items)
+            ["items"] = JArray.FromObject(updateVoucherData.items)
         };
 
-        var encoded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(postData));
-        Debug.Log($"<color=yellow>PATCH Json: {JsonConvert.SerializeObject(encoded)}</color>");
+        Debug.Log($"<color=yellow>POST Json: {JsonConvert.SerializeObject(putData)}</color>");
+        var encoded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(putData));
 
         updateRequest.ContentType = "application/json";
         Stream dataStream = updateRequest.GetRequestStream();
@@ -65,7 +66,10 @@ public static class APIHelper
         StreamReader updateReader = new StreamReader(updateResponse.GetResponseStream());
         string json = updateReader.ReadToEnd();
 
-        Debug.Log($"<color=yellow>UpdateVoucher: {json}</color>");
+        updateReader.Close();
+        updateResponse.Close();
+
+        Debug.Log($"<color=yellow>UpdateVoucher Success</color>");
     }
 
     public static void CreateVoucher(PostVoucherData data)
@@ -84,12 +88,12 @@ public static class APIHelper
                 ["status"] = data.voucher.status,
                 ["expiry_date"] = data.voucher.expiry_date,
                 ["fundingType"] = EVModel.Api.CachedUserData.fundingType,
-                ["items"] = JsonConvert.SerializeObject( data.voucher.items )
+                ["items"] = JArray.FromObject(data.voucher.items)
             }
         };
 
+        Debug.Log($"<color=yellow>POST Json: {JsonConvert.SerializeObject(postData)}</color>");
         var encoded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(postData));
-        Debug.Log($"<color=yellow>POST Json: {JsonConvert.SerializeObject(encoded)}</color>");
 
         createRequest.ContentType = "application/json";
         Stream dataStream = createRequest.GetRequestStream();
@@ -104,6 +108,6 @@ public static class APIHelper
         reader.Close();
         response.Close();
 
-        Debug.Log($"<color=yellow>CreateVoucher: {json}</color>");
+        Debug.Log($"<color=yellow>Create Pending Voucher Success: {json}</color>");
     }
 }

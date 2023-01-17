@@ -55,6 +55,8 @@ public class EVRedeemPageView : MonoBehaviour
 
     private void CreateQR(string id)
     {
+        m_storeEncodedTexture = new Texture2D(256, 256);
+
         string newVoucherID = id;
         Color32[] convertPixelToTexture = Encode(newVoucherID, m_storeEncodedTexture.width, m_storeEncodedTexture.height);
         m_storeEncodedTexture.SetPixels32(convertPixelToTexture);
@@ -83,7 +85,13 @@ public class EVRedeemPageView : MonoBehaviour
         EVControl.Api.OnShowVoucherDetails += UpdateDetailsView;
     }
 
-    private void UpdateDetailsView(Voucher voucherData)
+    private void OnDisable()
+    {
+        m_BtnRedeem.onClick.RemoveAllListeners();
+        EVControl.Api.OnShowVoucherDetails -= UpdateDetailsView;
+    }
+
+    public void UpdateDetailsView(Voucher voucherData, bool readOnly = false)
     {
         m_Data = voucherData;
 
@@ -98,10 +106,17 @@ public class EVRedeemPageView : MonoBehaviour
 
         ClearItems();
 
-        StartCoroutine( CreateItems(voucherData.items) );
+        StartCoroutine( CreateItems(voucherData.items, readOnly) );
+
+        m_BtnRedeem.gameObject.SetActive(!readOnly);
+
+        if (readOnly)
+        {
+            CreateQR(m_Data.id);
+        }
     }
 
-    private IEnumerator CreateItems(VoucherProduct[] products)
+    private IEnumerator CreateItems(VoucherProduct[] products, bool readOnly = false)
     {
         var wait = new WaitForEndOfFrame();
 
@@ -111,7 +126,7 @@ public class EVRedeemPageView : MonoBehaviour
             yield return wait;
 
             if (productView != null && product != null)
-                productView.Setup(product);
+                productView.Setup(product, readOnly);
         }
     }
 
@@ -181,10 +196,10 @@ public class EVRedeemPageView : MonoBehaviour
 
         newVoucher.voucher.items = redeemingItems.ToArray();
 
-        //EVControl.Api.UpdateVoucherData(remainingItems);
+        EVControl.Api.UpdateVoucherData(remainingItems);
         EVControl.Api.GenerateNewVoucherData(newVoucher);
 
-        EVControl.Api.FetchUserData("");
+        EVControl.Api.FetchUserData(EVModel.Api.UserId);
     }
 
     private Sprite GetOrgSprite(string org)

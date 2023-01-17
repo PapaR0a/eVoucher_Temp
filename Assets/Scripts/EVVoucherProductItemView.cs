@@ -21,14 +21,14 @@ public class EVVoucherProductItemView : MonoBehaviour
         }
     }
 
-    public void Setup(VoucherProduct data)
+    public void Setup(VoucherProduct data, bool readOnly = false)
     {
         m_Data = data;
 
         m_TxtQuantity = transform.Find("quantity").GetComponent<Text>();
         m_TxtProductName = transform.Find("name").GetComponent<Text>();
         m_IfRedeemCount = transform.Find("redeem").GetComponent<InputField>();
-
+        m_IfRedeemCount.gameObject.SetActive(!readOnly);
         m_IfRedeemCount.onEndEdit.AddListener(delegate { OnEditRedeem(); });
 
         m_TxtQuantity.text = data.remaining.ToString();

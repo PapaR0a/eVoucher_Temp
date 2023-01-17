@@ -24,8 +24,8 @@ public class EVControl
         }
     }
     #endregion
-
-    public Action<Voucher> OnShowVoucherDetails { get; set; }
+    public Action OnFetchUsers { get; set; }
+    public Action<Voucher, bool> OnShowVoucherDetails { get; set; }
     public Action<string> OnUpdateUserIdDisplay { get; set; }
 
     public void Init()
@@ -36,10 +36,12 @@ public class EVControl
     public void FetchUsers()
     {
         APIHelper.GetListUsers();
+        OnFetchUsers?.Invoke();
     }
 
     public void FetchUserData(string userId)
     {
+        EVModel.Api.UserId = userId;
         EVModel.Api.CachedUserData = APIHelper.GetUserData(userId);
         OnUpdateUserIdDisplay?.Invoke(EVModel.Api.CachedUserData.name);
     }
@@ -54,8 +56,8 @@ public class EVControl
         APIHelper.CreateVoucher(newVoucherData);
     }
 
-    public void ShowVoucherDetails(Voucher voucher)
+    public void ShowVoucherDetails(Voucher voucher, bool readOnly = false)
     {
-        OnShowVoucherDetails?.Invoke(voucher);
+        OnShowVoucherDetails?.Invoke(voucher, readOnly);
     }
 }

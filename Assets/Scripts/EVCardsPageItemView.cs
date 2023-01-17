@@ -63,7 +63,7 @@ public class EVCardsPageItemView : MonoBehaviour
     public void OnClickRedeem()
     {
         EVModel.Api.CachedCurrentVoucher = m_Data;
-        EVControl.Api.ShowVoucherDetails(m_Data);
+        EVControl.Api.ShowVoucherDetails(m_Data, false);
     }
 
     private Sprite GetOrgSprite(string org)

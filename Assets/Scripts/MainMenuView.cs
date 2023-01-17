@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class MainMenuView : MonoBehaviour
 {
     [SerializeField] private Text m_UserIdDisplay;
+    [SerializeField] private GameObject m_RedeemPage;
 
     void Start()
     {
@@ -22,7 +23,7 @@ public class MainMenuView : MonoBehaviour
 
     private void FetchUserData()
     {
-        EVControl.Api.FetchUserData("");
+        EVControl.Api.FetchUserData(EVModel.Api.UserId);
     }
 
     private void UpdateUserNameDisplay(string name)
