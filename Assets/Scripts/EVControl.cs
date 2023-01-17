@@ -26,6 +26,7 @@ public class EVControl
     #endregion
 
     public Action<Voucher> OnShowVoucherDetails { get; set; }
+    public Action<string> OnUpdateUserIdDisplay { get; set; }
 
     public void Init()
     {
@@ -35,6 +36,7 @@ public class EVControl
     public void FetchUserData(string userId)
     {
         EVModel.Api.CachedUserData = APIHelper.GetUserData(userId);
+        OnUpdateUserIdDisplay?.Invoke(EVModel.Api.CachedUserData.name);
     }
 
     public void UpdateVoucherData(PatchVoucherData updateVoucherData)

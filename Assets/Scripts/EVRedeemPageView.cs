@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-//using zxing;
+using ZXing;
+using ZXing.QrCode;
 
 public class EVRedeemPageView : MonoBehaviour
 {
@@ -25,11 +28,39 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private Image m_ImageCardFront;
 
     [SerializeField] private RawImage m_QRCode;
+    [SerializeField] private Text m_QRCodeIdDisplay;
+    private Texture2D m_storeEncodedTexture;
+    private string m_newVoucherId;
 
     // Start is called before the first frame update
     void Start()
     {
+        m_storeEncodedTexture = new Texture2D(256, 256);
+    }
 
+    private Color32[] Encode(string textForEncoding, int width, int height)
+    {
+        BarcodeWriter writer = new BarcodeWriter
+        {
+            Format = BarcodeFormat.QR_CODE,
+            Options = new QrCodeEncodingOptions
+            {
+                Height = height,
+                Width = width
+            }
+        };
+
+        return writer.Write(textForEncoding);
+    }
+
+    private void CreateQR(string id)
+    {
+        string newVoucherID = id;
+        Color32[] convertPixelToTexture = Encode(newVoucherID, m_storeEncodedTexture.width, m_storeEncodedTexture.height);
+        m_storeEncodedTexture.SetPixels32(convertPixelToTexture);
+        m_storeEncodedTexture.Apply();
+
+        m_QRCode.texture = m_storeEncodedTexture;
     }
 
     void OnDestroy()
@@ -92,15 +123,31 @@ public class EVRedeemPageView : MonoBehaviour
         }
     }
 
+    private string GenerateRandomId(int length)
+    {
+        System.Random random = new System.Random();
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var stringChars = new char[length];
+
+        for (int i = 0; i < stringChars.Length; i++)
+        {
+            stringChars[i] = chars[random.Next(chars.Length)];
+        }
+
+        return new string(stringChars);
+    }
+
     private void OnGenerateQR()
     {
-        //m_QRCode
+        m_newVoucherId = GenerateRandomId(16);
+        CreateQR(m_newVoucherId);
+        m_QRCodeIdDisplay.text = m_newVoucherId;
 
         var newVoucher = new PostVoucherData();
         newVoucher.patiendId = EVModel.Api.CachedUserData.id;
 
         newVoucher.voucher = new Voucher();
-        newVoucher.voucher.id = "NEW ID";
+        newVoucher.voucher.id = m_newVoucherId;
         newVoucher.voucher.status = "Pending";
         newVoucher.voucher.department = m_Data.department;
         newVoucher.voucher.org = m_Data.org;
@@ -137,11 +184,6 @@ public class EVRedeemPageView : MonoBehaviour
         EVControl.Api.UpdateVoucherData(remainingItems);
         EVControl.Api.GenerateNewVoucherData(newVoucher);
     }
-
-    //private Color32[] CreateQR()
-    //{
-
-    //}
 
     private Sprite GetOrgSprite(string org)
     {
