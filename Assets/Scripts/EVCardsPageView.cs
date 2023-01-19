@@ -27,6 +27,7 @@ public class EVCardsPageView : MonoBehaviour
         }
 
         List<Voucher> historyVouchers = EVModel.Api.GetHistoryVouchers();
+        historyVouchers.Reverse();
         //Debug.Log($"<color=yellow>historyVouchers {JsonConvert.SerializeObject(historyVouchers)}</color>");
         if (historyVouchers != null && historyVouchers.Count > 0)
         {

@@ -92,6 +92,8 @@ public class EVRedeemPageView : MonoBehaviour
     {
         m_BtnRedeem.onClick.RemoveAllListeners();
         EVControl.Api.OnShowVoucherDetails -= UpdateDetailsView;
+
+        EVControl.Api.FetchUserData(EVModel.Api.UserId);
     }
 
     public void UpdateDetailsView(Voucher voucherData, bool readOnly = false)
@@ -117,6 +119,10 @@ public class EVRedeemPageView : MonoBehaviour
         if (readOnly)
         {
             CreateQR(m_Data.id);
+        }
+        else
+        {
+            m_QRCodeIdDisplay.text = "";
         }
     }
 
@@ -145,23 +151,23 @@ public class EVRedeemPageView : MonoBehaviour
         }
     }
 
-    private string GenerateRandomId(int length)
+    private string GenerateRandomId(int length = 0)
     {
-        System.Random random = new System.Random();
-        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var stringChars = new char[length];
+        //System.Random random = new System.Random();
+        //var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        //var stringChars = new char[length];
 
-        for (int i = 0; i < stringChars.Length; i++)
-        {
-            stringChars[i] = chars[random.Next(chars.Length)];
-        }
+        //for (int i = 0; i < stringChars.Length; i++)
+        //{
+        //    stringChars[i] = chars[random.Next(chars.Length)];
+        //}
 
-        return new string(stringChars);
+        return System.Guid.NewGuid().ToString();
     }
 
     private void OnGenerateQR()
     {
-        m_newVoucherId = GenerateRandomId(16);
+        m_newVoucherId =  GenerateRandomId();
         CreateQR(m_newVoucherId);
         m_QRCodeIdDisplay.text = m_newVoucherId;
 
