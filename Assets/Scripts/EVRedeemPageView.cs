@@ -30,6 +30,7 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private RawImage m_QRCode;
     [SerializeField] private Text m_QRCodeIdDisplay;
     [SerializeField] private GameObject m_ScanToRedeem;
+    [SerializeField] private Text m_ScanToRedeemText;
     [SerializeField] private Text m_TxtToRedeem;
     private Texture2D m_storeEncodedTexture;
     private string m_newVoucherId;
@@ -123,6 +124,15 @@ public class EVRedeemPageView : MonoBehaviour
         else
         {
             m_QRCodeIdDisplay.text = "";
+        }
+
+        if (voucherData.status.ToLower() != "pending")
+        {
+            m_ScanToRedeemText.text = $"Voucher is {voucherData.status}";
+        }
+        else
+        {
+            m_ScanToRedeemText.text = $"Scan to Redeem";
         }
     }
 

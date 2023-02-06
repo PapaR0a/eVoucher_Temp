@@ -40,10 +40,11 @@ public class EVVoucherProductItemView : MonoBehaviour
         if (float.TryParse(m_IfRedeemCount.text, out float output1))
         {
             m_IfRedeemCount.text = Mathf.Clamp(output1, 0, m_Data.remaining).ToString();
+            m_Remaining = m_Data.remaining - (int)output1;
             m_TxtQuantity.text = m_Remaining < 0 ? 0.ToString() : m_Remaining.ToString();
 
             m_RedeemCount = int.Parse(m_IfRedeemCount.text);
-            m_Remaining = int.Parse(m_TxtQuantity.text);
+            //m_Remaining = int.Parse(m_TxtQuantity.text);
 
             m_RedeemCount = m_RedeemCount < 0 ? 0 : m_RedeemCount;
             m_Remaining = m_Remaining < 0 ? 0 : m_Remaining;

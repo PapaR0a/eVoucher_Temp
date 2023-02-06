@@ -13003,6 +13003,7 @@ MonoBehaviour:
   m_QRCode: {fileID: 1483817992}
   m_QRCodeIdDisplay: {fileID: 1940434456}
   m_ScanToRedeem: {fileID: 659832187}
+  m_ScanToRedeemText: {fileID: 2080672726}
   m_TxtToRedeem: {fileID: 24012982}
 --- !u!1 &829549417
 GameObject:
@@ -31217,7 +31218,7 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 0
-    m_Bottom: 0
+    m_Bottom: 100
   m_ChildAlignment: 1
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
@@ -36843,10 +36844,10 @@ RectTransform:
   m_Father: {fileID: 659832191}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 336.8132, y: 64}
+  m_SizeDelta: {x: 0, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2080672726
 MonoBehaviour:
