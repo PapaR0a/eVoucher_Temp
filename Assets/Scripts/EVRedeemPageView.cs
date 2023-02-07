@@ -213,6 +213,7 @@ public class EVRedeemPageView : MonoBehaviour
                 redeemingItem.id = itemView.GetItemId();
                 redeemingItem.name = itemView.GetItemName();
                 redeemingItem.quantity = itemView.GetRedeemCount();
+                remainingItem.remaining = itemView.GetRedeemCount();
                 redeemingItems.Add(redeemingItem);
             }
         }
