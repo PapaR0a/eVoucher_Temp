@@ -32,6 +32,10 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private GameObject m_ScanToRedeem;
     [SerializeField] private Text m_ScanToRedeemText;
     [SerializeField] private Text m_TxtToRedeem;
+
+    [SerializeField] private InputField m_InputAddress;
+    [SerializeField] private InputField m_InputNumber;
+    [SerializeField] private InputField m_InputEmail;
     private Texture2D m_storeEncodedTexture;
     private string m_newVoucherId;
 
@@ -107,6 +111,10 @@ public class EVRedeemPageView : MonoBehaviour
         m_TxtExpiryDate.text = $"Expiry Date: {voucherData.expiry_date}";
         m_TxtId.text = voucherData.id;
 
+        m_InputAddress.text = voucherData.address ?? string.Empty;
+        m_InputNumber.text = voucherData.contactNo ?? string.Empty;
+        m_InputEmail.text = voucherData.email ?? string.Empty;
+
         m_ImageOrgLogo.sprite = GetOrgSprite(m_Data.org);
         m_ImageCardFront.sprite = GetFrontCardSprite(m_Data.org);
 
@@ -117,6 +125,11 @@ public class EVRedeemPageView : MonoBehaviour
         m_TxtToRedeem.gameObject.SetActive(!readOnly);
         m_BtnRedeem.gameObject.SetActive(!readOnly);
         m_QRCode.gameObject.SetActive(readOnly);
+
+        m_InputAddress.interactable = !readOnly;
+        m_InputNumber.interactable = !readOnly;
+        m_InputEmail.interactable = !readOnly;
+
         if (readOnly)
         {
             CreateQR(m_Data.id);
@@ -175,8 +188,17 @@ public class EVRedeemPageView : MonoBehaviour
         return System.Guid.NewGuid().ToString();
     }
 
+    private void DisableDeliveryInputs()
+    {
+        m_InputAddress.interactable = false;
+        m_InputNumber.interactable = false;
+        m_InputEmail.interactable = false;
+    }
+
     private void OnGenerateQR()
     {
+        DisableDeliveryInputs();
+
         m_newVoucherId =  GenerateRandomId();
         CreateQR(m_newVoucherId);
         m_QRCodeIdDisplay.text = m_newVoucherId;
@@ -192,11 +214,16 @@ public class EVRedeemPageView : MonoBehaviour
         newVoucher.voucher.expiry_date = m_Data.expiry_date;
         newVoucher.voucher.fundingType = EVModel.Api.CachedUserData.fundingType;
 
+        newVoucher.voucher.address = m_InputAddress.text;
+        newVoucher.voucher.contactNo = m_InputNumber.text;
+        newVoucher.voucher.email = m_InputEmail.text;
+
         var redeemingItems = new List<VoucherProduct>();
         var remainingItems = new PatchVoucherData();
         remainingItems.patiendId = EVModel.Api.CachedUserData.id;
         remainingItems.voucherId = m_Data.id;
         remainingItems.items = new List<VoucherProduct>();
+
         foreach (Transform item in m_ProductsContainer)
         {
             EVVoucherProductItemView itemView = item.GetComponent<EVVoucherProductItemView>();
@@ -205,25 +232,27 @@ public class EVRedeemPageView : MonoBehaviour
                 var remainingItem = new VoucherProduct();
                 remainingItem.id = itemView.GetItemId();
                 remainingItem.name = itemView.GetItemName();
-                remainingItem.quantity = itemView.GetItemDefaultQuantity();
-                remainingItem.remaining = itemView.GetItemRemaining();
+                //remainingItem.quantity = itemView.GetItemDefaultQuantity();
+                remainingItem.remaining = itemView.GetItemDefaultQuantity() - itemView.GetRedeemCount();
                 remainingItems.items.Add(remainingItem);
 
                 var redeemingItem = new VoucherProduct();
                 redeemingItem.id = itemView.GetItemId();
                 redeemingItem.name = itemView.GetItemName();
-                redeemingItem.quantity = itemView.GetRedeemCount();
-                remainingItem.remaining = itemView.GetRedeemCount();
+                redeemingItem.remaining = itemView.GetRedeemCount();
+                //redeemingItem.quantity = itemView.GetRedeemCount();
                 redeemingItems.Add(redeemingItem);
             }
         }
 
         newVoucher.voucher.items = redeemingItems.ToArray();
 
-        EVControl.Api.UpdateVoucherData(remainingItems);
+        //EVControl.Api.UpdateVoucherData(remainingItems); // Disabled active voucher updating
         EVControl.Api.GenerateNewVoucherData(newVoucher);
 
         EVControl.Api.FetchUserData(EVModel.Api.UserId);
+
+        m_ScanToRedeemText.text = $"Scan to Redeem";
     }
 
     private Sprite GetOrgSprite(string org)

@@ -88,7 +88,10 @@ public static class APIHelper
                 ["status"] = data.voucher.status,
                 ["expiry_date"] = data.voucher.expiry_date,
                 ["fundingType"] = EVModel.Api.CachedUserData.fundingType,
-                ["items"] = JArray.FromObject(data.voucher.items)
+                ["items"] = JArray.FromObject(data.voucher.items),
+                ["address"] = data.voucher.address,
+                ["contactNo"] = data.voucher.contactNo,
+                ["email"] = data.voucher.email,
             }
         };
 

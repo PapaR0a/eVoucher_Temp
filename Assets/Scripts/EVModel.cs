@@ -87,6 +87,9 @@ public class Voucher
     public string expiry_date;
     public string fundingType;
     public VoucherProduct[] items;
+    public string address;
+    public string contactNo;
+    public string email;
 }
 
 [System.Serializable]
