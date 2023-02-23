@@ -90,6 +90,8 @@ public class Voucher
     public string address;
     public string contactNo;
     public string email;
+    public string deliveryDate;
+    public string deliveryTime;
 }
 
 [System.Serializable]

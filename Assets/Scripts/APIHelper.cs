@@ -92,6 +92,8 @@ public static class APIHelper
                 ["address"] = data.voucher.address,
                 ["contactNo"] = data.voucher.contactNo,
                 ["email"] = data.voucher.email,
+                ["deliveryDate"] = data.voucher.deliveryDate,
+                ["deliveryTime"] = data.voucher.deliveryTime
             }
         };
 

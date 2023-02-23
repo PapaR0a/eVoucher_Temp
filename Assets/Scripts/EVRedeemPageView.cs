@@ -36,6 +36,11 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private InputField m_InputAddress;
     [SerializeField] private InputField m_InputNumber;
     [SerializeField] private InputField m_InputEmail;
+    [SerializeField] private DatePickerControl m_InputDate;
+    [SerializeField] private DatePickerControl m_InputTime;
+    [SerializeField] private Text m_InputDateText;
+    [SerializeField] private Text m_InputTimeText;
+
     private Texture2D m_storeEncodedTexture;
     private string m_newVoucherId;
 
@@ -114,6 +119,10 @@ public class EVRedeemPageView : MonoBehaviour
         m_InputAddress.text = voucherData.address ?? string.Empty;
         m_InputNumber.text = voucherData.contactNo ?? string.Empty;
         m_InputEmail.text = voucherData.email ?? string.Empty;
+        m_InputDate.dateText.text = voucherData.deliveryDate ?? string.Empty;
+        m_InputDateText.text = voucherData.deliveryDate ?? "Delivery Date";
+        m_InputTime.dateText.text = voucherData.deliveryTime ?? string.Empty;
+        m_InputTimeText.text = voucherData.deliveryTime ?? "Delivery Time";
 
         m_ImageOrgLogo.sprite = GetOrgSprite(m_Data.org);
         m_ImageCardFront.sprite = GetFrontCardSprite(m_Data.org);
@@ -176,15 +185,6 @@ public class EVRedeemPageView : MonoBehaviour
 
     private string GenerateRandomId(int length = 0)
     {
-        //System.Random random = new System.Random();
-        //var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        //var stringChars = new char[length];
-
-        //for (int i = 0; i < stringChars.Length; i++)
-        //{
-        //    stringChars[i] = chars[random.Next(chars.Length)];
-        //}
-
         return System.Guid.NewGuid().ToString();
     }
 
@@ -217,39 +217,27 @@ public class EVRedeemPageView : MonoBehaviour
         newVoucher.voucher.address = m_InputAddress.text;
         newVoucher.voucher.contactNo = m_InputNumber.text;
         newVoucher.voucher.email = m_InputEmail.text;
+        newVoucher.voucher.deliveryDate = m_InputDate.dateText.text;
+        newVoucher.voucher.deliveryTime = m_InputTime.dateText.text;
 
         var redeemingItems = new List<VoucherProduct>();
-        var remainingItems = new PatchVoucherData();
-        remainingItems.patiendId = EVModel.Api.CachedUserData.id;
-        remainingItems.voucherId = m_Data.id;
-        remainingItems.items = new List<VoucherProduct>();
 
         foreach (Transform item in m_ProductsContainer)
         {
             EVVoucherProductItemView itemView = item.GetComponent<EVVoucherProductItemView>();
             if (itemView != null)
             {
-                var remainingItem = new VoucherProduct();
-                remainingItem.id = itemView.GetItemId();
-                remainingItem.name = itemView.GetItemName();
-                //remainingItem.quantity = itemView.GetItemDefaultQuantity();
-                remainingItem.remaining = itemView.GetItemDefaultQuantity() - itemView.GetRedeemCount();
-                remainingItems.items.Add(remainingItem);
-
                 var redeemingItem = new VoucherProduct();
                 redeemingItem.id = itemView.GetItemId();
                 redeemingItem.name = itemView.GetItemName();
                 redeemingItem.remaining = itemView.GetRedeemCount();
-                //redeemingItem.quantity = itemView.GetRedeemCount();
                 redeemingItems.Add(redeemingItem);
             }
         }
 
         newVoucher.voucher.items = redeemingItems.ToArray();
 
-        //EVControl.Api.UpdateVoucherData(remainingItems); // Disabled active voucher updating
         EVControl.Api.GenerateNewVoucherData(newVoucher);
-
         EVControl.Api.FetchUserData(EVModel.Api.UserId);
 
         m_ScanToRedeemText.text = $"Scan to Redeem";
