@@ -40,9 +40,11 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private DatePickerControl m_InputTime;
     [SerializeField] private Text m_InputDateText;
     [SerializeField] private Text m_InputTimeText;
+    [SerializeField] private EVDeliveryView m_DeliveryView;
 
     private Texture2D m_storeEncodedTexture;
     private string m_newVoucherId;
+    private bool m_isReadOnly;
 
     // Start is called before the first frame update
     void Start()
@@ -104,11 +106,15 @@ public class EVRedeemPageView : MonoBehaviour
         EVControl.Api.OnShowVoucherDetails -= UpdateDetailsView;
 
         EVControl.Api.FetchUserData(EVModel.Api.UserId);
+
+        m_DeliveryView.ClearFields();
     }
 
     public void UpdateDetailsView(Voucher voucherData, bool readOnly = false)
     {
+        m_newVoucherId = string.Empty;
         m_Data = voucherData;
+        m_isReadOnly = readOnly;
 
         m_TxtFundingType.text = $"Funding Type: {voucherData.fundingType}";
         m_TxtOrganization.text = $"Organization: {voucherData.org}";
@@ -150,7 +156,7 @@ public class EVRedeemPageView : MonoBehaviour
 
         if (voucherData.status.ToLower() != "pending")
         {
-            m_ScanToRedeemText.text = $"Voucher is {voucherData.status}";
+            m_ScanToRedeemText.text = $"Voucher is {voucherData.status.ToLower()}";
         }
         else
         {
@@ -197,12 +203,22 @@ public class EVRedeemPageView : MonoBehaviour
 
     private void OnGenerateQR()
     {
-        DisableDeliveryInputs();
-
-        m_newVoucherId =  GenerateRandomId();
+        m_newVoucherId = GenerateRandomId();
         CreateQR(m_newVoucherId);
         m_QRCodeIdDisplay.text = m_newVoucherId;
 
+        PostVoucherData pendingVoucher = GenerateFromActive();
+
+        EVControl.Api.GenerateNewVoucherData(pendingVoucher);
+        EVControl.Api.FetchUserData(EVModel.Api.UserId);
+
+        m_ScanToRedeemText.text = $"Scan to Redeem";
+
+        UpdateDetailsView(pendingVoucher.voucher, true);
+    }
+
+    private PostVoucherData GenerateFromActive()
+    {
         var newVoucher = new PostVoucherData();
         newVoucher.patiendId = EVModel.Api.CachedUserData.id;
 
@@ -214,11 +230,11 @@ public class EVRedeemPageView : MonoBehaviour
         newVoucher.voucher.expiry_date = m_Data.expiry_date;
         newVoucher.voucher.fundingType = EVModel.Api.CachedUserData.fundingType;
 
-        newVoucher.voucher.address = m_InputAddress.text;
-        newVoucher.voucher.contactNo = m_InputNumber.text;
-        newVoucher.voucher.email = m_InputEmail.text;
-        newVoucher.voucher.deliveryDate = m_InputDate.dateText.text;
-        newVoucher.voucher.deliveryTime = m_InputTime.dateText.text;
+        newVoucher.voucher.address = string.Empty;
+        newVoucher.voucher.contactNo = string.Empty;
+        newVoucher.voucher.email = string.Empty;
+        newVoucher.voucher.deliveryDate = string.Empty;
+        newVoucher.voucher.deliveryTime = string.Empty;
 
         var redeemingItems = new List<VoucherProduct>();
 
@@ -237,10 +253,84 @@ public class EVRedeemPageView : MonoBehaviour
 
         newVoucher.voucher.items = redeemingItems.ToArray();
 
-        EVControl.Api.GenerateNewVoucherData(newVoucher);
-        EVControl.Api.FetchUserData(EVModel.Api.UserId);
+        return newVoucher;
+    }
 
-        m_ScanToRedeemText.text = $"Scan to Redeem";
+    private PostVoucherData GenerateFromPage()
+    {
+        var newVoucher = new PostVoucherData();
+        newVoucher.patiendId = EVModel.Api.CachedUserData.id;
+
+        newVoucher.voucher = new Voucher();
+        newVoucher.voucher.id = !string.IsNullOrEmpty(m_newVoucherId) ? m_newVoucherId : m_Data.id;
+        newVoucher.voucher.status = m_Data.status;
+        newVoucher.voucher.department = m_Data.department;
+        newVoucher.voucher.org = m_Data.org;
+        newVoucher.voucher.expiry_date = m_Data.expiry_date;
+        newVoucher.voucher.fundingType = EVModel.Api.CachedUserData.fundingType;
+
+        newVoucher.voucher.address = m_Data.address;
+        newVoucher.voucher.contactNo = m_Data.contactNo;
+        newVoucher.voucher.email = m_Data.email;
+        newVoucher.voucher.deliveryDate = m_Data.deliveryDate;
+        newVoucher.voucher.deliveryTime = m_Data.deliveryTime;
+
+        var redeemingItems = new List<VoucherProduct>();
+
+        foreach (Transform item in m_ProductsContainer)
+        {
+            EVVoucherProductItemView itemView = item.GetComponent<EVVoucherProductItemView>();
+            if (itemView != null)
+            {
+                var redeemingItem = new VoucherProduct();
+                redeemingItem.id = itemView.GetItemId();
+                redeemingItem.name = itemView.GetItemName();
+                redeemingItem.remaining = m_Data.status.ToLower() == "active" ? itemView.GetRedeemCount() : itemView.GetItemRemaining();
+                redeemingItems.Add(redeemingItem);
+            }
+        }
+
+        newVoucher.voucher.items = redeemingItems.ToArray();
+
+        return newVoucher;
+    }
+
+    public void OpenDeliveryDetails()
+    {
+        m_DeliveryView.gameObject.SetActive(true);
+        m_DeliveryView.Setup(GenerateFromPage(), (data)=>
+        {
+            data.voucher.status = "requestDelivery";
+
+            if (m_isReadOnly)
+            {
+                EVControl.Api.UpdateRequestDelivery(data, () =>
+                {
+                    m_DeliveryView.ClearFields();
+                    EVControl.Api.FetchUserData(EVModel.Api.UserId);
+                    m_DeliveryView.gameObject.SetActive(false);
+
+                    UpdateDetailsView(data.voucher, true);
+                });
+            }
+            else
+            {
+                m_newVoucherId = GenerateRandomId();
+                CreateQR(m_newVoucherId);
+                m_QRCodeIdDisplay.text = m_newVoucherId;
+
+                data.voucher.id = m_newVoucherId;
+
+                EVControl.Api.CreateNewRequestDelivery(data, () =>
+                {
+                    m_DeliveryView.ClearFields();
+                    EVControl.Api.FetchUserData(EVModel.Api.UserId);
+                    m_DeliveryView.gameObject.SetActive(false);
+
+                    UpdateDetailsView(data.voucher, true);
+                });
+            }
+        });
     }
 
     private Sprite GetOrgSprite(string org)

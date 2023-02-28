@@ -56,6 +56,16 @@ public class EVControl
         APIHelper.CreateVoucher(newVoucherData);
     }
 
+    public void CreateNewRequestDelivery(PostVoucherData newRequestData, Action callback = null)
+    {
+        APIHelper.CreateDeliveryRequest(newRequestData, callback);
+    }
+
+    public void UpdateRequestDelivery(PostVoucherData updateRequestData, Action callback = null)
+    {
+        APIHelper.UpdateDeliveryRequest(updateRequestData, callback);
+    }
+
     public void ShowVoucherDetails(Voucher voucher, bool readOnly = false)
     {
         OnShowVoucherDetails?.Invoke(voucher, readOnly);

@@ -53,7 +53,7 @@ public class EVVoucherProductItemView : MonoBehaviour
 
     public int GetItemRemaining()
     {
-        return m_Remaining;
+        return int.Parse(m_TxtQuantity.text);
     }
 
     public string GetItemId()
