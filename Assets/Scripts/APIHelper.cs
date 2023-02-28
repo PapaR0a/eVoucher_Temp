@@ -168,7 +168,7 @@ public static class APIHelper
             ["patientId"] = data.patiendId,
             ["voucher"] = new JObject()
             {
-                ["redeemId"] = data.voucher.id,
+                ["id"] = data.voucher.id,
                 ["items"] = JArray.FromObject(data.voucher.items),
                 ["address"] = data.voucher.address,
                 ["contactNo"] = data.voucher.contactNo,

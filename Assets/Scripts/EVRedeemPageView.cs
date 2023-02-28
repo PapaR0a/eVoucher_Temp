@@ -41,6 +41,7 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private Text m_InputDateText;
     [SerializeField] private Text m_InputTimeText;
     [SerializeField] private EVDeliveryView m_DeliveryView;
+    [SerializeField] private GameObject m_DeliveryButton;
 
     private Texture2D m_storeEncodedTexture;
     private string m_newVoucherId;
@@ -135,7 +136,7 @@ public class EVRedeemPageView : MonoBehaviour
 
         ClearItems();
 
-        StartCoroutine( CreateItems(voucherData.items, readOnly) );
+        StartCoroutine(CreateItems(voucherData.items, readOnly));
         m_ScanToRedeem.SetActive(readOnly);
         m_TxtToRedeem.gameObject.SetActive(!readOnly);
         m_BtnRedeem.gameObject.SetActive(!readOnly);
@@ -162,6 +163,8 @@ public class EVRedeemPageView : MonoBehaviour
         {
             m_ScanToRedeemText.text = $"Scan to Redeem";
         }
+
+        m_DeliveryButton.SetActive(voucherData.status.ToLower() == "pending" || voucherData.status.ToLower() == "active" || voucherData.status.ToLower().Contains("deliver"));
     }
 
     private IEnumerator CreateItems(VoucherProduct[] products, bool readOnly = false)
@@ -298,6 +301,7 @@ public class EVRedeemPageView : MonoBehaviour
     public void OpenDeliveryDetails()
     {
         m_DeliveryView.gameObject.SetActive(true);
+        m_DeliveryView.RequestButton.gameObject.SetActive(m_Data.status.ToLower() == "active" || m_Data.status.ToLower() == "pending");
         m_DeliveryView.Setup(GenerateFromPage(), (data)=>
         {
             data.voucher.status = "requestDelivery";

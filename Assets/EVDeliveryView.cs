@@ -61,7 +61,7 @@ public class EVDeliveryView : MonoBehaviour
         InputHour.interactable = !isReadOnly;
         InputMinute.interactable = !isReadOnly;
 
-        RequestButton.gameObject.SetActive(!isReadOnly);
+        //RequestButton.gameObject.SetActive(!isReadOnly);
     }
 
     public string GetDate()
