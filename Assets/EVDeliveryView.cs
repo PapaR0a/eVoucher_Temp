@@ -19,6 +19,7 @@ public class EVDeliveryView : MonoBehaviour
     public InputField InputMinute;
 
     public Button RequestButton;
+    public GameObject Message;
 
     public PostVoucherData VoucherData;
     private Action<PostVoucherData> OnRequestDelivery;
@@ -88,6 +89,19 @@ public class EVDeliveryView : MonoBehaviour
 
     public void RequestDelivery()
     {
+        if (string.IsNullOrEmpty(InputAddress.text) ||
+            string.IsNullOrEmpty(InputNumber.text) ||
+            string.IsNullOrEmpty(InputEmail.text) ||
+            string.IsNullOrEmpty(InputDay.text) ||
+            string.IsNullOrEmpty(InputMonth.text) ||
+            string.IsNullOrEmpty(InputYear.text) ||
+            string.IsNullOrEmpty(InputHour.text) ||
+            string.IsNullOrEmpty(InputMinute.text))
+        {
+            Message.SetActive(true);
+            return;
+        }
+
         VoucherData.voucher.address = InputAddress.text;
         VoucherData.voucher.contactNo = InputNumber.text;
         VoucherData.voucher.email = InputEmail.text;
@@ -109,6 +123,8 @@ public class EVDeliveryView : MonoBehaviour
 
         InputHour.text = string.Empty;
         InputMinute.text = string.Empty;
+
+        Message.SetActive(false);
     }
 
     public void CloseDelivery()

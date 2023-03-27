@@ -51,7 +51,7 @@ public class EVControl
         APIHelper.UpdateVoucher(updateVoucherData);
     }
 
-    public void GenerateNewVoucherData(PostVoucherData newVoucherData)
+    public void GenerateNewVoucherData(PostVoucherData newVoucherData, Action<bool, string> callback = null)
     {
         APIHelper.CreateVoucher(newVoucherData);
     }

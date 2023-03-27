@@ -33,13 +33,6 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private Text m_ScanToRedeemText;
     [SerializeField] private Text m_TxtToRedeem;
 
-    [SerializeField] private InputField m_InputAddress;
-    [SerializeField] private InputField m_InputNumber;
-    [SerializeField] private InputField m_InputEmail;
-    [SerializeField] private DatePickerControl m_InputDate;
-    [SerializeField] private DatePickerControl m_InputTime;
-    [SerializeField] private Text m_InputDateText;
-    [SerializeField] private Text m_InputTimeText;
     [SerializeField] private EVDeliveryView m_DeliveryView;
     [SerializeField] private GameObject m_DeliveryButton;
 
@@ -79,6 +72,8 @@ public class EVRedeemPageView : MonoBehaviour
 
         m_QRCode.texture = m_storeEncodedTexture;
         m_QRCodeIdDisplay.text = id;
+
+        Screen.brightness = 1; // Set device brightness to max for scanning
     }
 
     void OnDestroy()
@@ -123,13 +118,6 @@ public class EVRedeemPageView : MonoBehaviour
         m_TxtExpiryDate.text = $"Expiry Date: {voucherData.expiry_date}";
         m_TxtId.text = voucherData.id;
 
-        m_InputAddress.text = voucherData.address ?? string.Empty;
-        m_InputNumber.text = voucherData.contactNo ?? string.Empty;
-        m_InputEmail.text = voucherData.email ?? string.Empty;
-        m_InputDate.dateText.text = voucherData.deliveryDate ?? string.Empty;
-        m_InputDateText.text = voucherData.deliveryDate ?? "Delivery Date";
-        m_InputTime.dateText.text = voucherData.deliveryTime ?? string.Empty;
-        m_InputTimeText.text = voucherData.deliveryTime ?? "Delivery Time";
 
         m_ImageOrgLogo.sprite = GetOrgSprite(m_Data.org);
         m_ImageCardFront.sprite = GetFrontCardSprite(m_Data.org);
@@ -141,10 +129,6 @@ public class EVRedeemPageView : MonoBehaviour
         m_TxtToRedeem.gameObject.SetActive(!readOnly);
         m_BtnRedeem.gameObject.SetActive(!readOnly);
         m_QRCode.gameObject.SetActive(readOnly);
-
-        m_InputAddress.interactable = !readOnly;
-        m_InputNumber.interactable = !readOnly;
-        m_InputEmail.interactable = !readOnly;
 
         if (readOnly)
         {
@@ -197,13 +181,6 @@ public class EVRedeemPageView : MonoBehaviour
         return System.Guid.NewGuid().ToString();
     }
 
-    private void DisableDeliveryInputs()
-    {
-        m_InputAddress.interactable = false;
-        m_InputNumber.interactable = false;
-        m_InputEmail.interactable = false;
-    }
-
     private void OnGenerateQR()
     {
         m_newVoucherId = GenerateRandomId();
@@ -212,7 +189,11 @@ public class EVRedeemPageView : MonoBehaviour
 
         PostVoucherData pendingVoucher = GenerateFromActive();
 
-        EVControl.Api.GenerateNewVoucherData(pendingVoucher);
+        EVControl.Api.GenerateNewVoucherData(pendingVoucher, (isSuccess, message) =>
+        {
+
+        });
+
         EVControl.Api.FetchUserData(EVModel.Api.UserId);
 
         m_ScanToRedeemText.text = $"Scan to Redeem";

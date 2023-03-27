@@ -73,7 +73,7 @@ public static class APIHelper
         Debug.Log($"<color=yellow>UpdateVoucher Success</color>");
     }
 
-    public static void CreateVoucher(PostVoucherData data)
+    public static void CreateVoucher(PostVoucherData data, Action<bool, string> callback = null)
     {
         HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_VOUCHER_CREATE);
         createRequest.Method = "POST";
@@ -110,6 +110,11 @@ public static class APIHelper
 
         StreamReader reader = new StreamReader(response.GetResponseStream());
         string json = reader.ReadToEnd();
+
+        JObject result = JsonConvert.DeserializeObject<JObject>(json);
+        bool isSuccess = result.Value<int>("code") == 200;
+        string message = result.Value<string>("message") ?? string.Empty;
+        callback?.Invoke(isSuccess, message);
 
         reader.Close();
         response.Close();
@@ -196,6 +201,6 @@ public static class APIHelper
 
         callback?.Invoke();
 
-        Debug.Log($"<color=yellow>Request Delivery Success: {json}</color>");
+        Debug.Log($"<color=yellow>Update Pending To Delivery Success: {json}</color>");
     }
 }
